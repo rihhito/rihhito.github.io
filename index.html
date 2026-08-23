@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ariel Ramos Perez — Robotics &amp; Simulation</title>
+<meta name="description" content="Robotics engineer working where simulation meets hardware. ROS 2, reinforcement learning, C++, and sensor data that rarely arrives clean.">
+
+<meta property="og:title" content="Ariel Ramos Perez — Robotics &amp; Simulation">
+<meta property="og:description" content="Robotics engineer working where simulation meets hardware.">
+<meta property="og:type" content="website">
+
+<!-- Opt out of AI training scrapers and image reuse. -->
+<meta name="robots" content="index, follow, noai, noimageai">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="copyright" content="© 2026 Ariel Ramos Perez. All rights reserved.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;900&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+/* ============================================================
+   TOKENS
+   ============================================================ */
+:root{
+  --ink:      #0B0C0E;
+  --slate:    #14171C;
+  --line:     #242A32;
+  --bone:     #E8E3D7;
+  --bone-dim: #8A8578;
+  --coral:    #FF4D2E;
+  --acid:     #C6F24E;
+  --cyan:     #4DD8E8;
+
+  --display:'Archivo',system-ui,sans-serif;
+  --body:'IBM Plex Sans',system-ui,sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,monospace;
+
+  --gutter:clamp(1.25rem,4vw,4rem);
+  --maxw:1240px;
+  --ease:cubic-bezier(.22,.61,.36,1);
+}
+
+*,*::before,*::after{ box-sizing:border-box; }
+
+html{ scroll-behavior:smooth; -webkit-text-size-adjust:100%; }
+@media (prefers-reduced-motion:reduce){ html{ scroll-behavior:auto; } }
+
+body{
+  margin:0;
+  background:var(--ink);
+  color:var(--bone);
+  font-family:var(--body);
+  font-weight:300;
+  font-size:clamp(.95rem,.9rem + .2vw,1.05rem);
+  line-height:1.65;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* Paper grain */
+body::before{
+  content:'';
+  position:fixed; inset:0;
+  pointer-events:none; z-index:1;
+  opacity:.035;
+  background-image:radial-gradient(circle at 1px 1px,var(--bone) 1px,transparent 0);
+  background-size:3px 3px;
+}
+
+::selection{ background:var(--coral); color:var(--ink); }
+a{ color:inherit; }
+:focus-visible{ outline:2px solid var(--acid); outline-offset:3px; }
+
+.wrap{ width:100%; max-width:var(--maxw); margin-inline:auto; padding-inline:var(--gutter); }
+
+/* ============================================================
+   TOP BAR
+   ============================================================ */
+.topbar{
+  position:fixed; top:0; left:0; right:0; z-index:60;
+  border-bottom:1px solid transparent; background:transparent;
+  transition:background .4s var(--ease),border-color .4s var(--ease);
+}
+.topbar.is-stuck{
+  background:rgba(11,12,14,.82);
+  backdrop-filter:blur(14px);
+  border-bottom-color:var(--line);
+}
+.topbar__in{
+  display:flex; align-items:center; justify-content:space-between;
+  gap:1rem; height:56px;
+  font-family:var(--mono); font-size:.66rem;
+  letter-spacing:.14em; text-transform:uppercase;
+}
+.topbar__mark{ color:var(--bone); text-decoration:none; font-weight:500; }
+.topbar__mark i{ font-style:normal; color:var(--coral); }
+.topbar__nav{ display:flex; gap:1.4rem; }
+.topbar__nav a{ color:var(--bone-dim); text-decoration:none; transition:color .25s var(--ease); }
+.topbar__nav a:hover{ color:var(--acid); }
+@media (max-width:720px){ .topbar__nav{ display:none; } }
+
+/* ============================================================
+   HERO
+   ============================================================ */
+.hero{
+  position:relative; min-height:100svh;
+  display:flex; flex-direction:column; justify-content:flex-end;
+  padding-block:8rem 3.5rem; overflow:hidden;
+}
+#cloud{ position:absolute; inset:0; width:100%; height:100%; z-index:0; }
+.hero::after{
+  content:''; position:absolute; inset:0; z-index:1; pointer-events:none;
+  background:
+    linear-gradient(to top,var(--ink) 2%,rgba(11,12,14,.55) 38%,transparent 72%),
+    radial-gradient(120% 80% at 50% 20%,transparent 40%,var(--ink) 100%);
+}
+.hero__in{ position:relative; z-index:2; width:100%; }
+
+.hero__eyebrow{
+  font-family:var(--mono); font-size:.68rem;
+  letter-spacing:.24em; text-transform:uppercase; color:var(--cyan);
+  display:flex; align-items:center; gap:.7rem; margin-bottom:1.6rem;
+}
+.hero__eyebrow::before{ content:''; width:34px; height:1px; background:var(--coral); }
+
+.hero__name{
+  font-family:var(--display); font-weight:900;
+  font-size:clamp(2.9rem,11vw,8.4rem);
+  line-height:.86; letter-spacing:-.03em; text-transform:uppercase;
+  margin:0 0 1.6rem;
+}
+/* On hover only. */
+.hero__name span{ display:block; position:relative; }
+.hero__name span::before,
+.hero__name span::after{
+  content:attr(data-t); position:absolute; inset:0;
+  pointer-events:none; opacity:0;
+  transition:transform .5s var(--ease),opacity .5s var(--ease);
+}
+.hero__name span::before{ color:var(--coral); }
+.hero__name span::after{ color:var(--cyan); }
+.hero__name:hover span::before{ transform:translate(-4px,2px); opacity:.85; }
+.hero__name:hover span::after{ transform:translate(4px,-2px); opacity:.7; }
+
+.hero__lede{
+  max-width:56ch; margin:0 0 2.6rem;
+  font-size:clamp(1rem,.95rem + .35vw,1.22rem); color:var(--bone);
+}
+.hero__lede b{ font-weight:500; color:var(--acid); }
+
+.hero__meta{
+  display:flex; flex-wrap:wrap; gap:.5rem 1.4rem;
+  font-family:var(--mono); font-size:.68rem;
+  letter-spacing:.12em; text-transform:uppercase; color:var(--bone-dim);
+  border-top:1px solid var(--line); padding-top:1.2rem; margin:0;
+}
+.hero__meta i{ font-style:normal; color:var(--coral); }
+
+/* ============================================================
+   SECTION SCAFFOLD
+   ============================================================ */
+.sec{ padding-block:clamp(4.5rem,10vw,8rem); position:relative; z-index:2; }
+.sec--tint{ background:var(--slate); }
+
+.sec__head{
+  display:flex; align-items:baseline; gap:1.2rem; flex-wrap:wrap;
+  padding-bottom:1.1rem; border-bottom:1px solid var(--line);
+  margin-bottom:clamp(2rem,4vw,3.4rem);
+}
+.sec__path{ font-family:var(--mono); font-size:.72rem; letter-spacing:.16em; color:var(--coral); }
+.sec__title{
+  font-family:var(--display); font-weight:900;
+  font-size:clamp(1.5rem,1.1rem + 1.8vw,2.4rem);
+  letter-spacing:-.02em; text-transform:uppercase; margin:0; flex:1;
+}
+.sec__count{
+  font-family:var(--mono); font-size:.66rem;
+  letter-spacing:.14em; text-transform:uppercase; color:var(--bone-dim);
+}
+.sec__intro{ max-width:56ch; margin:0 0 2.4rem; color:var(--bone); }
+
+/* ============================================================
+   FIELD WORK
+   ============================================================ */
+.entry{
+  display:grid; grid-template-columns:minmax(0,5fr) minmax(0,6fr);
+  gap:clamp(1.5rem,4vw,3.5rem); align-items:start;
+  padding-block:clamp(2rem,4vw,3rem);
+  border-bottom:1px solid var(--line);
+}
+.entry:last-child{ border-bottom:0; }
+@media (max-width:860px){ .entry{ grid-template-columns:1fr; } }
+
+.shots{ display:grid; gap:.9rem; }
+.shots .shot--sub .shot__frame{ aspect-ratio:16/9; }
+
+/* -- Photo slot -- */
+.shot{ margin:0; }
+.shot__frame{
+  position:relative; aspect-ratio:4/3; overflow:hidden;
+  border:1px solid var(--line);
+  background:
+    repeating-linear-gradient(45deg,rgba(77,216,232,.05) 0 2px,transparent 2px 9px),
+    var(--ink);
+}
+.shot__frame img{
+  position:absolute; inset:0; width:100%; height:100%;
+  object-fit:cover; filter:saturate(.82) contrast(1.06);
+  transition:transform .8s var(--ease),filter .5s var(--ease);
+}
+.shot__frame:hover img{ transform:scale(1.035); filter:saturate(1) contrast(1.1); }
+.shot__ph{
+  position:absolute; inset:0; padding:1rem;
+  display:grid; place-content:center; justify-items:center; gap:.5rem;
+  font-family:var(--mono); font-size:.62rem;
+  letter-spacing:.18em; text-transform:uppercase;
+  color:var(--bone-dim); text-align:center;
+}
+.shot.has-img .shot__ph{ display:none; }
+.shot__ph svg{ opacity:.5; }
+
+/* HUD corner ticks */
+.shot__frame::before,.shot__frame::after{
+  content:''; position:absolute; width:14px; height:14px;
+  border:1px solid var(--coral); pointer-events:none; z-index:2;
+}
+.shot__frame::before{ top:8px; left:8px; border-right:0; border-bottom:0; }
+.shot__frame::after{ bottom:8px; right:8px; border-left:0; border-top:0; }
+
+/* image keeps its natural proportions */
+.shot--free .shot__frame{ aspect-ratio:auto; min-height:60px; }
+.shot--free .shot__frame img{ position:static; width:100%; height:auto; display:block; object-fit:fill; }
+.shot--free .shot__frame:hover img{ transform:none; }
+
+/* Warm tint overlay */
+.shot__tint{ display:none; }
+.shot[data-tone="warm"] .shot__tint{
+  display:block; position:absolute; inset:0; z-index:1;
+  background:#E9C79E; mix-blend-mode:multiply; pointer-events:none;
+}
+.shot[data-tone="warm"] img{ filter:saturate(.92) contrast(1.04); }
+
+/* casual copying inconvenience */
+.shot img{
+  -webkit-user-drag:none; user-select:none; -webkit-user-select:none;
+  pointer-events:none;
+}
+
+.shot figcaption{
+  display:flex; justify-content:space-between; gap:1rem; margin-top:.7rem;
+  font-family:var(--mono); font-size:.62rem;
+  letter-spacing:.14em; text-transform:uppercase; color:var(--bone-dim);
+}
+.shot figcaption b{ color:var(--cyan); font-weight:400; }
+
+.entry__org{
+  font-family:var(--mono); font-size:.66rem;
+  letter-spacing:.16em; text-transform:uppercase; color:var(--cyan); margin:0 0 .6rem;
+}
+.entry__role{
+  font-family:var(--display); font-weight:900;
+  font-size:clamp(1.25rem,1rem + 1.1vw,1.85rem);
+  line-height:1.06; letter-spacing:-.02em; text-transform:uppercase; margin:0 0 .5rem;
+}
+.entry__when{
+  font-family:var(--mono); font-size:.66rem;
+  letter-spacing:.12em; color:var(--bone-dim); margin:0 0 1.3rem;
+}
+.entry__body p{ margin:0 0 .9rem; }
+.entry__body p:last-child{ margin-bottom:1.4rem; }
+
+.tags{ display:flex; flex-wrap:wrap; gap:.4rem; list-style:none; padding:0; margin:0; }
+.tags li{
+  font-family:var(--mono); font-size:.6rem;
+  letter-spacing:.1em; text-transform:uppercase; color:var(--bone-dim);
+  border:1px solid var(--line); padding:.28rem .55rem;
+  transition:border-color .3s var(--ease),color .3s var(--ease);
+}
+.tags li:hover{ border-color:var(--coral); color:var(--bone); }
+
+/* ============================================================
+   BUILDS
+   ============================================================ */
+.builds{
+  display:grid; gap:1px;
+  grid-template-columns:repeat(auto-fit,minmax(min(100%,290px),1fr));
+  background:var(--line); border:1px solid var(--line);
+}
+.build{
+  position:relative; background:var(--ink);
+  padding:clamp(1.4rem,3vw,2.1rem);
+  display:flex; flex-direction:column; gap:.85rem;
+  transition:background .35s var(--ease);
+}
+.build:hover{ background:var(--slate); }
+.build::after{
+  content:''; position:absolute; left:0; right:0; bottom:0; height:2px;
+  background:var(--coral); transform:scaleX(0); transform-origin:left;
+  transition:transform .45s var(--ease);
+}
+.build:hover::after{ transform:scaleX(1); }
+
+.build__status{
+  display:inline-flex; align-items:center; gap:.45rem;
+  font-family:var(--mono); font-size:.58rem;
+  letter-spacing:.16em; text-transform:uppercase; color:var(--bone-dim);
+}
+.build__status::before{
+  content:''; width:6px; height:6px; border-radius:50%;
+  background:currentColor; flex:none;
+}
+.build__status[data-s="shipped"]{ color:var(--acid); }
+.build__status[data-s="progress"]{ color:var(--coral); }
+
+.build__name{
+  font-family:var(--display); font-weight:900;
+  font-size:1.12rem; line-height:1.15;
+  letter-spacing:-.01em; text-transform:uppercase; margin:0;
+}
+.build__desc{ font-size:.9rem; color:var(--bone-dim); margin:0; flex:1; }
+.build__stack{ font-family:var(--mono); font-size:.6rem; letter-spacing:.1em; color:var(--cyan); }
+.build__link{
+  display:inline-flex; align-items:center; gap:.4rem;
+  font-family:var(--mono); font-size:.62rem;
+  letter-spacing:.14em; text-transform:uppercase;
+  color:var(--bone); text-decoration:none;
+  transition:gap .3s var(--ease),color .3s var(--ease);
+}
+.build__link:hover{ gap:.75rem; color:var(--acid); }
+.build__link[aria-disabled="true"]{ color:var(--bone-dim); pointer-events:none; }
+
+/* ============================================================
+   STACK
+   ============================================================ */
+.stack{ display:grid; gap:1.6rem; }
+.stack__row{
+  display:grid; grid-template-columns:minmax(0,180px) minmax(0,1fr);
+  gap:1rem clamp(1rem,3vw,2.5rem); align-items:start;
+  padding-bottom:1.6rem; border-bottom:1px solid var(--line);
+}
+.stack__row:last-child{ border-bottom:0; padding-bottom:0; }
+@media (max-width:640px){ .stack__row{ grid-template-columns:1fr; gap:.6rem; } }
+
+.stack__label{
+  font-family:var(--mono); font-size:.66rem;
+  letter-spacing:.16em; text-transform:uppercase; color:var(--coral); padding-top:.2rem;
+}
+.stack__items{
+  display:flex; flex-wrap:wrap; gap:.45rem .9rem;
+  font-family:var(--mono); font-size:.76rem; color:var(--bone);
+  list-style:none; margin:0; padding:0;
+}
+.stack__items li{ position:relative; padding-left:.9rem; }
+.stack__items li::before{
+  content:''; position:absolute; left:0; top:.55em;
+  width:4px; height:4px; background:var(--cyan);
+}
+.stack__items--col{ flex-direction:column; gap:.45rem; }
+
+/* ============================================================
+   ART
+   ============================================================ */
+/* Collage */
+.art{
+  position:relative; display:block;
+  aspect-ratio:8/7; min-height:400px;
+}
+.art__pc{
+  position:absolute; margin:0;
+  transition:transform .55s var(--ease), filter .55s var(--ease);
+}
+.art__pc .shot__frame{ box-shadow:0 20px 55px rgba(0,0,0,.6); }
+.art__pc:hover{ transform:translateY(-8px) scale(1.022); z-index:20; }
+
+.art__pc--a{ left:2%;  top:1%;  width:55%; z-index:1; }
+.art__pc--b{ left:60%; top:19%; width:38%; z-index:3; }
+.art__pc--c{ left:18%; top:55%; width:37%; z-index:2; }
+
+/* dim the pieces behind the one being hovered */
+.art:hover .art__pc{ filter:brightness(.62) saturate(.85); }
+.art:hover .art__pc:hover{ filter:none; }
+
+@media (max-width:860px){
+  .art{ position:static; aspect-ratio:auto; min-height:0;
+        display:grid; gap:1.6rem; grid-template-columns:1fr; }
+  .art__pc{ position:static; width:auto; transform:none; }
+  .art__pc:hover{ transform:none; }
+  .art:hover .art__pc{ filter:none; }
+}
+@media (prefers-reduced-motion:reduce){
+  .art__pc, .art__pc:hover{ transform:none; filter:none; }
+  .art:hover .art__pc{ filter:none; }
+}
+
+/* ============================================================
+   CONTACT
+   ============================================================ */
+.contact{
+  display:grid; gap:1px;
+  grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));
+  background:var(--line); border:1px solid var(--line);
+}
+.contact a{
+  background:var(--ink); padding:clamp(1.4rem,3vw,2rem);
+  text-decoration:none; display:flex; flex-direction:column; gap:.45rem;
+  transition:background .35s var(--ease);
+}
+.contact a:hover{ background:var(--slate); }
+.contact__k{
+  font-family:var(--mono); font-size:.6rem;
+  letter-spacing:.16em; text-transform:uppercase; color:var(--bone-dim);
+}
+.contact__v{
+  font-family:var(--display); font-weight:600; font-size:1rem;
+  letter-spacing:-.01em; color:var(--bone); word-break:break-word;
+  transition:color .3s var(--ease);
+}
+.contact a:hover .contact__v{ color:var(--acid); }
+
+.foot{
+  display:flex; justify-content:space-between; gap:1rem; flex-wrap:wrap;
+  border-top:1px solid var(--line); margin-top:2.6rem; padding-top:2rem;
+  font-family:var(--mono); font-size:.62rem;
+  letter-spacing:.12em; text-transform:uppercase; color:var(--bone-dim);
+}
+
+/* ============================================================
+   RETICLE
+   ============================================================ */
+.reticle{
+  position:fixed; top:0; left:0; z-index:80;
+  width:30px; height:30px; margin:-15px 0 0 -15px;
+  pointer-events:none; opacity:0; will-change:transform;
+  transition:opacity .3s var(--ease);
+}
+.reticle::before,.reticle::after{ content:''; position:absolute; background:var(--coral); }
+.reticle::before{ left:50%; top:0; width:1px; height:100%; transform:translateX(-50%); }
+.reticle::after{ top:50%; left:0; height:1px; width:100%; transform:translateY(-50%); }
+.reticle.is-on{ opacity:.55; }
+
+/* ============================================================
+   SCROLL REVEAL
+   ============================================================ */
+.rv{
+  opacity:0; transform:translateY(22px);
+  transition:opacity .7s var(--ease),transform .7s var(--ease);
+}
+.rv.is-in{ opacity:1; transform:none; }
+
+@media (prefers-reduced-motion:reduce){
+  .rv{ opacity:1; transform:none; transition:none; }
+  .reticle{ display:none; }
+  .hero__name span::before,.hero__name span::after{ display:none; }
+  *{ animation-duration:.001ms !important; transition-duration:.001ms !important; }
+}
+</style>
+</head>
+<body>
+
+<div class="reticle" id="reticle" aria-hidden="true"></div>
+
+<header class="topbar" id="topbar">
+  <div class="wrap topbar__in">
+    <a class="topbar__mark" href="#top">ARP<i>//</i>ROBOTICS</a>
+    <nav class="topbar__nav" aria-label="Sections">
+      <a href="#field">Field</a>
+      <a href="#builds">Builds</a>
+      <a href="#stack">Skills</a>
+      <a href="#art">Art</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- ============ HERO ============ -->
+  <section class="hero">
+    <canvas id="cloud" aria-hidden="true"></canvas>
+    <div class="wrap hero__in">
+      <p class="hero__eyebrow">Miami, FL &middot; M.S. Computer Engineering &middot; Robotics</p>
+
+      <h1 class="hero__name">
+        <span data-t="ARIEL">ARIEL</span>
+        <span data-t="RAMOS PEREZ">RAMOS PEREZ</span>
+      </h1>
+
+      <p class="hero__lede">
+        I'm a robotics engineer at FIU's Applied Research Center, writing C++ and
+        Python for machines that operate in the physical world: autonomous ground robots,
+        robotic arms, and the simulators used to test them before they touch hardware.
+        What I like most is the <b>gap between what the simulator predicts and what the 
+        hardware actually does, and building tools that let robots learn their way across it.</b>
+      </p>
+
+      <p class="hero__meta">
+        <span><i>&rsaquo;</i> ROS 2 / C++17</span>
+        <span><i>&rsaquo;</i> Isaac Sim &amp; Isaac Lab</span>
+        <span><i>&rsaquo;</i> Reinforcement learning</span>
+        <span><i>&rsaquo;</i> Point clouds &amp; LiDAR</span>
+        <span><i>&rsaquo;</i> Unreal Engine</span>
+      </p>
+    </div>
+  </section>
+
+  <!-- ============ FIELD WORK ============ -->
+  <section class="sec" id="field">
+    <div class="wrap">
+      <div class="sec__head rv">
+        <span class="sec__path">/field_work</span>
+        <h2 class="sec__title">Field Work</h2>
+        <span class="sec__count">02 entries</span>
+      </div>
+
+      <article class="entry rv">
+        <div class="shots">
+        <figure class="shot">
+          <div class="shot__frame">
+            <!-- PHOTO SLOT 1 -->
+            <img data-slot alt="UR-20 robotic arm under test at Savannah River National Laboratory" src="pictures/srnl2026.png">
+            <div class="shot__ph">
+              <svg width="30" height="30" viewBox="0 0 30 30" fill="none" stroke="currentColor" stroke-width="1">
+                <circle cx="15" cy="15" r="9"/><path d="M15 0v6M15 24v6M0 15h6M24 15h6"/>
+              </svg>
+              <span>Photo slot &mdash; SRNL</span>
+            </div>
+          </div>
+          <figcaption><span>UR-20 manipulation cell</span><b>SRNL / 2026</b></figcaption>
+        </figure>
+
+        <figure class="shot shot--sub">
+          <div class="shot__frame">
+            <!-- PHOTO SLOT 1B -->
+            <img data-slot alt="UR-20 robotic arm simulated in NVIDIA Isaac Sim" src="pictures/ur20sim.png">
+            <div class="shot__ph"><span>Photo slot &mdash; UR-20 in simulation</span></div>
+          </div>
+          <figcaption><span>Isaac Sim &middot; training environment</span><b>Simulated</b></figcaption>
+        </figure>
+        </div>
+
+        <div>
+          <p class="entry__org">Savannah River National Laboratory</p>
+          <h3 class="entry__role">Software Engineering Intern</h3>
+          <p class="entry__when">Jun 2026 &mdash; Aug 2026 &middot; Aiken, SC</p>
+          <div class="entry__body">
+            <p>
+              Trained a reinforcement learning policy in Isaac Sim and Isaac Lab that taught a
+              UR-20 robotic arm a contact-rich task: scraping dried radioactive waste from the
+              interior surfaces of storage tanks. Owned the prototype end to end and delivered
+              a working system inside a ten-week internship.
+            </p>
+            <p>
+              Integrated Isaac ROS cuMotion and nvblox to reconstruct the workcell in 3D and
+              generate collision-free motion plans, so learned trajectories could be validated
+              in simulation before being committed to real hardware. Most of the time went into
+              the unglamorous part, calibrating ZED and RealSense depth cameras, aligning
+              point clouds, and tracking down sensor dropouts that only appeared during live runs.
+            </p>
+          </div>
+          <ul class="tags">
+            <li>Isaac Sim</li><li>Isaac Lab</li><li>cuMotion</li><li>nvblox</li>
+            <li>Python</li><li>Docker</li><li>RealSense D435</li><li>ZED</li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="entry rv">
+        <div class="shots">
+        <figure class="shot">
+          <div class="shot__frame">
+            <!-- PHOTO SLOT 2 -->
+            <img data-slot alt="Clearpath Husky rover carrying ground-penetrating radar" src="pictures/huskya200.png">
+            <div class="shot__ph">
+              <svg width="30" height="30" viewBox="0 0 30 30" fill="none" stroke="currentColor" stroke-width="1">
+                <circle cx="15" cy="15" r="9"/><path d="M15 0v6M15 24v6M0 15h6M24 15h6"/>
+              </svg>
+              <span>Photo slot &mdash; FIU ARC</span>
+            </div>
+          </div>
+          <figcaption><span>Husky A200 &middot; GPR payload</span><b>FIU ARC / 2025</b></figcaption>
+        </figure>
+
+        <figure class="shot shot--sub">
+          <div class="shot__frame">
+            <!-- PHOTO SLOT 2B -->
+            <img data-slot alt="Clearpath Husky A300 configured for autonomous navigation" src="pictures/huskya300.png">
+            <div class="shot__ph"><span>Photo slot &mdash; Husky A300</span></div>
+          </div>
+          <figcaption><span>Husky A300 &middot; autonomous navigation</span><b>FIU ARC</b></figcaption>
+        </figure>
+        </div>
+
+        <div>
+          <p class="entry__org">Applied Research Center &middot; Florida International University</p>
+          <h3 class="entry__role">Student Researcher</h3>
+          <p class="entry__when">Jul 2025 &mdash; Present &middot; Miami, FL</p>
+          <div class="entry__body">
+            <p>
+              I develop ROS 2 nodes in C++ and Python for autonomous navigation on a Clearpath
+              Husky A300, using GPS as the primary odometry source.
+            </p>
+            <p>
+              We field a second Husky carrying ground-penetrating radar and LiDAR to scan walls,
+              floors, and ceilings in spaces that aren't safe for people to inspect by hand. The
+              data came back as 2D radargrams that took a long time to read, so I built a tool
+              that fuses the raw returns into a navigable 3D volume, turning an
+              interpretation problem into a viewing problem, and cutting scan review time.
+            </p>
+          </div>
+          <ul class="tags">
+            <li>ROS 2</li><li>C++</li><li>Python</li><li>LiDAR</li>
+            <li>GPR</li><li>GPS odometry</li><li>3D visualization</li><li>Linux</li>
+          </ul>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- ============ BUILDS ============ -->
+  <section class="sec sec--tint" id="builds">
+    <div class="wrap">
+      <div class="sec__head rv">
+        <span class="sec__path">/builds</span>
+        <h2 class="sec__title">Builds</h2>
+        <span class="sec__count">Personal work</span>
+      </div>
+
+      <div class="builds rv">
+
+        <article class="build">
+          <span class="build__status" data-s="shipped">Shipped</span>
+          <h3 class="build__name">ArtLens &mdash; MET Insights</h3>
+          <p class="build__desc">
+            Full-stack web and iOS application over the Metropolitan Museum of Art
+            collection. Designed the MySQL schema, built the recommendation feature in
+            Swift, and connected the iOS client to the backend REST API.
+          </p>
+          <span class="build__stack">Swift &middot; Python &middot; MySQL &middot; Streamlit</span>
+          <a class="build__link" href="https://github.com/lquincoso/ArtLens-MET-Insights" target="_blank" rel="noopener">View on GitHub &rarr;</a>
+        </article>
+
+        <article class="build">
+          <span class="build__status" data-s="progress">In progress</span>
+          <h3 class="build__name">Unreal Multiplayer Prototype</h3>
+          <p class="build__desc">
+            Working through Unreal's replication model from the C++ side: multi-client
+            sessions, server authority, and RPC-driven state changes. Currently deciding
+            what genuinely needs to travel over the wire versus what a client can derive
+            on its own.
+          </p>
+          <span class="build__stack">Unreal Engine &middot; C++</span>
+          <a class="build__link" href="#builds" aria-disabled="true">Repo soon &rarr;</a>
+        </article>
+
+        <article class="build">
+          <span class="build__status" data-s="planned">Planned</span>
+          <h3 class="build__name">ROS 2 &rarr; Unreal Bridge</h3>
+          <p class="build__desc">
+            Simulate a ground robot inside an Unreal environment, publish its sensor
+            output over ROS 2 topics, and drive it from a ROS 2 node. The same class of
+            problem Isaac Sim solves, with a different renderer underneath.
+          </p>
+          <span class="build__stack">Unreal Engine &middot; ROS 2 &middot; C++</span>
+          <a class="build__link" href="#builds" aria-disabled="true">Repo soon &rarr;</a>
+        </article>
+
+        <article class="build">
+          <span class="build__status" data-s="planned">Planned</span>
+          <h3 class="build__name">CUDA Point-Cloud Kernels</h3>
+          <p class="build__desc">
+            GPU-accelerated operations on depth-camera output, filtering,
+            downsampling, and alignment; benchmarked against the CPU tooling I
+            wrote at SRNL.
+          </p>
+          <span class="build__stack">CUDA &middot; C++</span>
+          <a class="build__link" href="#builds" aria-disabled="true">Repo soon &rarr;</a>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ STACK ============ -->
+  <section class="sec" id="stack">
+    <div class="wrap">
+      <div class="sec__head rv">
+        <span class="sec__path">/skills</span>
+        <h2 class="sec__title">Skills</h2>
+        <span class="sec__count">Working knowledge</span>
+      </div>
+
+      <div class="stack rv">
+        <div class="stack__row">
+          <span class="stack__label">Languages</span>
+          <ul class="stack__items">
+            <li>C++ (17/20)</li><li>C</li><li>Python</li><li>Swift</li><li>SQL</li>
+          </ul>
+        </div>
+        <div class="stack__row">
+          <span class="stack__label">Robotics &amp; Sim</span>
+          <ul class="stack__items">
+            <li>ROS 2</li><li>Isaac Sim</li><li>Isaac Lab</li><li>Isaac ROS</li>
+            <li>cuMotion</li><li>nvblox</li><li>Unreal Engine</li><li>Unity</li>
+          </ul>
+        </div>
+        <div class="stack__row">
+          <span class="stack__label">Learning</span>
+          <ul class="stack__items">
+            <li>PyTorch</li><li>TensorFlow</li><li>Reinforcement learning</li>
+          </ul>
+        </div>
+        <div class="stack__row">
+          <span class="stack__label">Sensors</span>
+          <ul class="stack__items">
+            <li>ZED 3D</li><li>Intel RealSense D435</li><li>LiDAR</li>
+            <li>Ground-penetrating radar</li><li>GPS odometry</li>
+          </ul>
+        </div>
+        <div class="stack__row">
+          <span class="stack__label">Tooling</span>
+          <ul class="stack__items">
+            <li>Linux</li><li>Git</li><li>Docker</li><li>CMake</li><li>MySQL</li>
+          </ul>
+        </div>
+        <div class="stack__row">
+          <span class="stack__label">Education</span>
+          <ul class="stack__items stack__items--col">
+            <li>M.S. Computer Engineering, Robotics &mdash; FIU, Dec 2027</li>
+            <li>B.S. Computer Science &mdash; FIU Honors, 3.98 GPA</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ ART ============ -->
+  <section class="sec sec--tint" id="art">
+    <div class="wrap">
+      <div class="sec__head rv">
+        <span class="sec__path">/art</span>
+        <h2 class="sec__title">Art</h2>
+        <span class="sec__count">Ongoing</span>
+      </div>
+
+      <p class="sec__intro rv">
+        I came up through a digital illustration program before I came to engineering. 
+        I was part of the Magnet Program offered at my high school, under professor Ramon Lopez,
+        @raylopezart on Instagram! He was the main person who inspired me to join the program
+        and thanks to him, I still love drawing and painting whenever I get a chance to.
+        It shapes the way I see the world today, and inspires me to push forward with all my goals.
+      </p>
+      <div class="art rv">
+        <figure class="shot shot--free art__pc art__pc--a">
+          <div class="shot__frame">
+            <!-- ART SLOT 1 -->
+            <img data-slot alt="Digital illustration by Ariel Ramos Perez" src="art/art_study_huashiJW.JPG">
+            <div class="shot__ph"><span>Art slot 01</span></div>
+          </div>
+          <figcaption><span>Study of Illustration by @huashiJW on X</span><b>Procreate</b></figcaption>
+        </figure>
+        <figure class="shot shot--free art__pc art__pc--b">
+          <div class="shot__frame">
+            <!-- ART SLOT 2 -->
+            <img data-slot alt="Digital illustration by Ariel Ramos Perez" src="art/flow.jpg">
+            <div class="shot__ph"><span>Art slot 02</span></div>
+          </div>
+          <figcaption><span>Painting of the black cat from the movie: Flow</span><b>Procreate</b></figcaption>
+        </figure>
+        <figure class="shot shot--free art__pc art__pc--c" data-tone="warm">
+          <div class="shot__frame">
+            <!-- ART SLOT 3 -->
+            <img data-slot alt="Gesture drawings by Ariel Ramos Perez" src="art/gesture_drawings.jpg">
+            <i class="shot__tint" aria-hidden="true"></i>
+            <div class="shot__ph"><span>Art slot 03</span></div>
+          </div>
+          <figcaption><span>Gesture Drawings</span><b>Procreate</b></figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CONTACT ============ -->
+  <section class="sec" id="contact">
+    <div class="wrap">
+      <div class="sec__head rv">
+        <span class="sec__path">/contact</span>
+        <h2 class="sec__title">Get in touch</h2>
+        <span class="sec__count">Open to Summer 2027</span>
+      </div>
+
+      <div class="contact rv">
+        <a href="mailto:arielrperezz@gmail.com">
+          <span class="contact__k">Email</span>
+          <span class="contact__v">arielrperezz@gmail.com</span>
+        </a>
+        <a href="https://github.com/rihhito" target="_blank" rel="noopener">
+          <span class="contact__k">GitHub</span>
+          <span class="contact__v">github.com/rihhito</span>
+        </a>
+        <a href="https://linkedin.com/in/ariel-ramos-perez" target="_blank" rel="noopener">
+          <span class="contact__k">LinkedIn</span>
+          <span class="contact__v">ariel-ramos-perez</span>
+        </a>
+        <a href="Ariel_Ramos_Perez_Resume.pdf" target="_blank" rel="noopener">
+          <span class="contact__k">Resume</span>
+          <span class="contact__v">PDF &rarr;</span>
+        </a>
+      </div>
+
+      <div class="foot">
+        <span>&copy; 2026 Ariel Ramos Perez &middot; Miami, FL</span>
+        <span>All artwork and photography &copy; Ariel Ramos Perez. Not licensed for reuse or AI training.</span>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+(function(){
+  'use strict';
+
+  var reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ==========================================================
+     POINT CLOUD
+     ========================================================== */
+  var canvas = document.getElementById('cloud');
+  var ctx = canvas.getContext('2d', { alpha:true });
+
+  var COLS = 64, ROWS = 42, N = COLS * ROWS;
+  var pos = new Float32Array(N * 3);
+  var W = 0, H = 0, dpr = 1;
+
+  function hash(x, y){
+    var n = Math.sin(x * 127.1 + y * 311.7) * 43758.5453;
+    return n - Math.floor(n);
+  }
+  function noise(x, y){
+    var xi = Math.floor(x), yi = Math.floor(y);
+    var xf = x - xi, yf = y - yi;
+    var u = xf * xf * (3 - 2 * xf), v = yf * yf * (3 - 2 * yf);
+    var a = hash(xi, yi), b = hash(xi + 1, yi);
+    var c = hash(xi, yi + 1), d = hash(xi + 1, yi + 1);
+    return a + (b - a) * u + (c - a) * v + (a - b - c + d) * u * v;
+  }
+
+  (function build(){
+    var i = 0;
+    for (var r = 0; r < ROWS; r++){
+      for (var c = 0; c < COLS; c++){
+        var x = (c / (COLS - 1) - 0.5) * 2.4;
+        var z = (r / (ROWS - 1) - 0.5) * 2.4;
+        var h = noise(c * 0.13, r * 0.13) * 0.9 + noise(c * 0.31, r * 0.31) * 0.28;
+        h *= 0.35 + Math.min(1, (x * x + z * z) * 1.5);
+        pos[i] = x; pos[i + 1] = 0.42 - h * 0.62; pos[i + 2] = z;
+        i += 3;
+      }
+    }
+  })();
+
+  var BUCKETS = 4;
+  var COLORS = ['#2C4A52', '#4DD8E8', '#E8E3D7', '#FF4D2E'];
+  var ALPHA  = [0.55, 0.8, 1, 1];
+  var bufs = [], counts = [];
+  for (var b = 0; b < BUCKETS; b++){ bufs.push(new Float32Array(N * 3)); counts.push(0); }
+
+  function resize(){
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    W = canvas.clientWidth; H = canvas.clientHeight;
+    canvas.width = Math.floor(W * dpr);
+    canvas.height = Math.floor(H * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  var angle = 0.6, scan = -1.6, last = 0;
+  var raf = 0, running = false, visible = true, onscreen = true;
+
+  function frame(now){
+    var dt = last ? Math.min((now - last) / 1000, 0.05) : 0.016;
+    last = now;
+
+    angle += dt * 0.16;
+    scan += dt * 0.62;
+    if (scan > 1.8) scan = -1.8;
+
+    var ca = Math.cos(angle), sa = Math.sin(angle);
+    var cx = W * 0.5, cy = H * 0.52;
+    var zoom = Math.min(W, H) * 0.66, fov = 3.1;
+    var k;
+
+    for (k = 0; k < BUCKETS; k++) counts[k] = 0;
+
+    for (var i = 0; i < N; i++){
+      var o = i * 3;
+      var px = pos[o], py = pos[o + 1], pz = pos[o + 2];
+
+      var rx = px * ca - pz * sa;
+      var rz = px * sa + pz * ca;
+
+      var persp = fov / (fov + rz + 1.9);
+      var sx = cx + rx * zoom * persp;
+      var sy = cy + py * zoom * persp;
+
+      if (sx < -20 || sx > W + 20 || sy < -20 || sy > H + 20) continue;
+
+      var d = rz - scan; if (d < 0) d = -d;
+
+      var band = d < 0.09 ? 3 : d < 0.30 ? 2 : d < 0.85 ? 1 : 0;
+      var size = (band === 3 ? 2.4 : band === 2 ? 1.7 : 1.15) * persp * 1.5;
+      if (size < 0.4) size = 0.4;
+
+      var t = counts[band] * 3, arr = bufs[band];
+      arr[t] = sx; arr[t + 1] = sy; arr[t + 2] = size;
+      counts[band]++;
+    }
+
+    ctx.clearRect(0, 0, W, H);
+    for (k = 0; k < BUCKETS; k++){
+      var n = counts[k];
+      if (!n) continue;
+      ctx.fillStyle = COLORS[k];
+      ctx.globalAlpha = ALPHA[k];
+      var src = bufs[k];
+      ctx.beginPath();
+      for (var m = 0; m < n; m++){
+        var q = m * 3, s = src[q + 2];
+        ctx.rect(src[q] - s * 0.5, src[q + 1] - s * 0.5, s, s);
+      }
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+
+    if (running) raf = requestAnimationFrame(frame);
+  }
+
+  function start(){
+    if (running || reduced) return;
+    running = true; last = 0;
+    raf = requestAnimationFrame(frame);
+  }
+  function stop(){
+    running = false;
+    if (raf) cancelAnimationFrame(raf);
+    raf = 0;
+  }
+  function sync(){ if (visible && onscreen) start(); else stop(); }
+
+  resize();
+  if (reduced) frame(0); else start();
+
+  if ('IntersectionObserver' in window){
+    new IntersectionObserver(function(es){
+      onscreen = es[0].isIntersecting; sync();
+    }, { threshold:0 }).observe(canvas);
+  }
+  document.addEventListener('visibilitychange', function(){
+    visible = !document.hidden; sync();
+  });
+
+  var rt;
+  addEventListener('resize', function(){
+    clearTimeout(rt);
+    rt = setTimeout(function(){ resize(); if (reduced) frame(0); }, 150);
+  }, { passive:true });
+
+
+  /* ==========================================================
+     COPY FRICTION
+     Blocks right-click-save and drag-to-desktop on artwork. This is
+     a speed bump, not protection — see the notes. Deliberately scoped
+     to figures so the rest of the page stays selectable and accessible.
+     ========================================================== */
+  Array.prototype.forEach.call(document.querySelectorAll('.shot'), function(fig){
+    fig.addEventListener('contextmenu', function(e){ e.preventDefault(); });
+    fig.addEventListener('dragstart', function(e){ e.preventDefault(); });
+  });
+
+
+  /* ==========================================================
+     PHOTO SLOTS
+     Shows the schematic frame until a real image loads.
+     ========================================================== */
+  Array.prototype.forEach.call(document.querySelectorAll('img[data-slot]'), function(img){
+    var fig = img.closest('.shot');
+    function ok(){ fig.classList.add('has-img'); img.style.display = ''; }
+    function bad(){ fig.classList.remove('has-img'); img.style.display = 'none'; }
+    if (!img.getAttribute('src')){ bad(); return; }
+    img.addEventListener('load', ok);
+    img.addEventListener('error', bad);
+    if (img.complete && img.naturalWidth) ok();
+  });
+
+
+  /* ==========================================================
+     SCROLL REVEAL
+     ========================================================== */
+  var rvs = document.querySelectorAll('.rv');
+  if ('IntersectionObserver' in window && !reduced){
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if (!e.isIntersecting) return;
+        e.target.classList.add('is-in');
+        io.unobserve(e.target);
+      });
+    }, { rootMargin:'0px 0px -12% 0px', threshold:0.06 });
+    Array.prototype.forEach.call(rvs, function(el){ io.observe(el); });
+  } else {
+    Array.prototype.forEach.call(rvs, function(el){ el.classList.add('is-in'); });
+  }
+
+
+  /* ==========================================================
+     TOP BAR: sentinel observer
+     ========================================================== */
+  var bar = document.getElementById('topbar');
+  var sentinel = document.createElement('div');
+  sentinel.style.cssText = 'position:absolute;top:0;height:80px;width:1px;pointer-events:none;';
+  document.body.appendChild(sentinel);
+  if ('IntersectionObserver' in window){
+    new IntersectionObserver(function(e){
+      bar.classList.toggle('is-stuck', !e[0].isIntersecting);
+    }).observe(sentinel);
+  }
+
+
+  /* ==========================================================
+     RETICLE: fine pointers only, transform writes only
+     ========================================================== */
+  if (matchMedia('(pointer:fine)').matches && !reduced){
+    var ret = document.getElementById('reticle');
+    var tx = 0, ty = 0, rx2 = 0, ry2 = 0, pending = false;
+
+    function tick(){
+      rx2 += (tx - rx2) * 0.18;
+      ry2 += (ty - ry2) * 0.18;
+      ret.style.transform = 'translate3d(' + rx2.toFixed(1) + 'px,' + ry2.toFixed(1) + 'px,0)';
+      if (Math.abs(tx - rx2) > 0.4 || Math.abs(ty - ry2) > 0.4){
+        requestAnimationFrame(tick);
+      } else {
+        pending = false;
+      }
+    }
+
+    addEventListener('pointermove', function(e){
+      tx = e.clientX; ty = e.clientY;
+      if (!ret.classList.contains('is-on')) ret.classList.add('is-on');
+      if (!pending){ pending = true; requestAnimationFrame(tick); }
+    }, { passive:true });
+
+    document.addEventListener('mouseleave', function(){ ret.classList.remove('is-on'); });
+  }
+
+})();
+</script>
+</body>
+</html>
